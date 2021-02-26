@@ -1,24 +1,35 @@
 @echo off
 :: STARTUP
-title J.A.R.V.I.S
-set jarvisver=FINAL
+title Eliza
+set ElizaVer=1.2.5
 set speech=start scripts\nircmd.exe speak text
 VER | findstr /i "5.1." > nul
 IF %ERRORLEVEL% EQU 0 set version=xp
 VER | findstr /i "6.1." > nul
 IF %ERRORLEVEL% EQU 0 set version=w7
-color a
+color %color%
 setlocal
-:: /STARTUP
+goto Check-Skip-dir
+
+:Check-Skip-dir
+if exist Skip-File (goto Skip-Simple-setting-avv) else (goto Create-skip-dir)
+
+:Create-skip-dir
+mkdir "Skip-File"
+cd Skip-File
+echo avvio > avvio.xavv
+goto Skip-Simple-setting
+
 :restart
+cd..
 echo                                                     ----------------------- 
 echo                                                       Logged in as: %username%
 echo                                                     -----------------------
 echo.
-echo                                   J.A.R.V.I.S 
+echo                                   Eliza
 echo                                   -----------
-echo                      Just A Rather Very Intelligent System
-echo                          ------      %jarvisver%      ------
+echo                      New Reinvented Windows Assistant
+echo                          ------      %ElizaVer%      ------
 echo                                     -------
 echo                                  RELEASE VERSION
 echo                                     -------
@@ -28,19 +39,265 @@ echo.
 echo.
 :newvoice
 echo.
+pause
+goto start
+
+:Skip-Simple-setting-avv
+cd Skip-File
+if exist "simple-setting.xconfig" (goto Skip-simple-setting-dimension) else (goto simple-setting)
+echo.
+
+:Skip-Simple-setting
+if exist "simple-setting.xconfig" (goto Skip-simple-setting-dimension) else (goto simple-setting)
+echo.
+
+:Skip-simple-setting-dimension
+if exist "simple-setting-1.xconfig" (goto setdim-1-all) else (goto setdim-2-all)
+echo.
+
+:simple-setting
+echo.
+echo Seleziona lo stile che ti piace:
+echo.
+echo 51, 44 (In stile Cortana)
+echo Defoult (Grandezza di defoult)
+choice /c 12 /n
+if %errorlevel% == 1 goto setdim-1
+if %errorlevel% == 2 goto setdim-2
+
+:setdim-1
+set XYZ=51, 44
+echo %XYZ% > simple-setting-1.xconfig
+echo Simple-setting > simple-setting.xconfig
+goto Skip-Simple-setting
+
+:setdim-2
+set XYZ=120, 30
+echo %XYZ% > simple-setting-2.xconfig
+echo Simple-setting > simple-setting.xconfig
+goto Skip-Simple-setting
+
+:setdim-1-all
+set XYZ=51, 44
+goto Skip-change-color
+
+:setdim-2-all
+set XYZ=120, 30
+echo restart > set-start-2.xconfig
+goto Skip-change-color
+
+:simple-setting-color
+echo.
+echo Seleziona lo stile che ti piace:
+echo.
+echo Sfondo nero; Scritte blu
+echo Sfondo nero; Scritte gialle
+echo.
+choice /c 123 /n
+if %errorlevel% == 1 goto color-b
+if %errorlevel% == 2 goto color-e
+
+:Skip-change-color
+if exist "color-setting.xconfig" (goto Color-G-P) else (goto simple-setting-color)
+
+:color-b
+set color=B
+echo %color% > select-color-b.xconfig
+echo color-setting > color-setting.xconfig
+goto Skip-change-color
+
+:color-e
+set color=E
+echo %color% > select-color-e.xconfig
+echo color-setting > color-setting.xconfig
+goto Skip-change-color
+
+:Color-G-P
+if exist "select-color-b.xconfig" (goto color-B) else (goto color-E)
+
+:color-B
+set color=B
+cd..
+goto Skip-check-eta-1
+
+:color-E
+set color=E
+cd..
+goto Skip-check-eta-1
+
+:user-eta
+echo.
+cd..
+echo Seleziona l'opzione più adatta a te:
+echo.
+echo Sono minorenne
+echo Sono maggiorenne
+echo.
+choice /c 12 /n
+if %errorlevel% == 1 goto minorenne-1
+if %errorlevel% == 2 goto maggiorenne-1
+
+:Skip-check-eta-1
+echo.
+cd Skip-File
+if not exist "user-underage.xconfig" (goto Skip-check-eta-2) else (goto set-eta-17)
+
+:Skip-check-eta-2
+echo.
+cd Skip-File
+if not exist "user-adult.xconfig" (goto user-eta) else (goto set-eta-18)
+
+:minorenne-1
+echo.
+cd Skip-File
+if not exist "user-underage.xconfig" (goto minorenne-2) else (goto Skip-check-eta-1)
+
+:minorenne-2
+echo eta=17 > user-underage.xconfig
+goto set-eta-17
+
+:set-eta-18
+set ETA=18
+cd..
+goto username
+
+:set-eta-17
+set ETA=17
+cd..
+goto username
+
+:maggiorenne-1
+echo.
+cd Skip-File
+if not exist "user-adult.xconfig" (goto maggiorenne-2) else (goto Skip-check-eta-1)
+
+:maggiorenne-2
+echo eta=18 > user-adult.xconfig
+goto set-eta-18
+
+:username
+cd Skip-File
+if exist "username-nickname.txt" (goto startonwake) else (goto username-2)
+
+:username-2
+echo.
+set/p "user=Inserisci il tuo Username: "
+if '%user%' == '' echo Username non valido. Inserisci un Username valido. && pause && goto username
+choice /c SN /m "Confermi il tuo Username '%user%' ?"
+if %errorlevel% == 2 goto mailclient
+echo %user% > username-nickname.txt
+echo Username confermato.
+
+:mailclient
+echo.
+if not exist "mail-client.txt" (goto mailclient-1) else (goto browserclient)
+echo.
+
+:mailclient-1
+echo.
+echo Bene %user%, seleziona il client di mail che usi:
+echo.
+echo Gmail
+echo Outlook
+echo Posta Windows 10
+echo Yahoo Mail
+echo Libero Mail
+echo Mozzilla Thunderbird
+echo Nessuno di questi
+echo.
+echo MClient > mail-client.txt
+choice /c 1234567 /n
+if %errorlevel% == 1 set MClient=gmail
+if %errorlevel% == 2 set MClient=outlook
+if %errorlevel% == 3 set MClient=posta
+if %errorlevel% == 4 set MClient=yahoo
+if %errorlevel% == 5 set MClient=libero
+if %errorlevel% == 6 set MClient=thunderbird
+if %errorlevel% == 7 set MClient=other
+goto mailclient
+
+:browserclient
+echo.
+if not exist "browser-client.txt" (goto browserclient-1) else (goto startonwake)
+echo.
+
+:browserclient-1
+echo.
+echo Bene %user%, seleziona il tuo browser preferito:
+echo.
+echo Microsoft Edge
+echo Google Chrome
+echo CryptoTab Browser
+echo Brave
+echo Opera
+echo Opera Gaming
+echo Tor Browser
+echo Nessuno di questi
+echo.
+echo BrowserClient > browser-client.txt
+choice /c 12345678 /nif %errorlevel% == 1 set BrowserClient=edge
+if %errorlevel% == 2 set BrowserClient=chrome
+if %errorlevel% == 3 set BrowserClient=cryptotab
+if %errorlevel% == 4 set BrowserClient=brave
+if %errorlevel% == 5 set BrowserClient=opera
+if %errorlevel% == 6 set BrowserClient=operagaming
+if %errorlevel% == 7 set BrowserClient=tor
+if %errorlevel% == 8 set BrowserClient=other
+goto browserclient
+
 :startonwake
-echo Greetings %username%, how may I be of assistance?
-%speech% "Greetings %username%, how may I be of assistance?"
+cd..
+mode %XYZ%
+color %color%
+set/p user=<"C:\Users\gioia\OneDrive\Desktop\WinAssistant\Skip-File\username-nickname.txt"
+cd Skip-File
+echo %MClient% > mail-client.txt
+echo %BrowserClient% > browser-client.txt
+cd..
+echo Ciao %user%, cosa posso fare per te?
+%speech% "Ottimo %user%, come posso esseri utile?"
+goto start
+
 :start
 echo.
-set /p C=Please type/say a command: 
+set /p C=Chiedi a Eliza: 
 echo.
-if "%C%"=="hello there jarvis" goto jarvis
 if "%C%"=="jarvis" goto jarvis
 if "%C%"=="introduce" goto introduce
 if "%C%"=="mute" goto mute
+if "%C%"=="muto" goto mute
+if "%C%"=="muto!" goto mute
+if "%C%"=="mutati" goto mute
+if "%C%"=="stai zitto" goto mute
+if "%C%"=="stai zitto!" goto mute
+if "%C%"=="Stai zitto" goto mute
+if "%C%"=="Stai zitto!" goto mute
+if "%C%"=="Fai silenzio" goto mute
+if "%C%"=="Fai silenzio!" goto mute
+if "%C%"=="fai silenzio!" goto mute
+if "%C%"=="fai silenzio!" goto mute
 if "%C%"=="unmute" goto unmute
+if "%C%"=="smutati" goto unmute
+if "%C%"=="Smutati" goto unmute
+if "%C%"=="Smutati!" goto unmute
+if "%C%"=="smutati!" goto unmute
+if "%C%"=="Ripristina il volume" goto unmute
+if "%C%"=="Ripristina il volume!" goto unmute
+if "%C%"=="ripristina il volume" goto unmute
+if "%C%"=="Attiva il volume" goto unmute
+if "%C%"=="Attiva il volume!" goto unmute
+if "%C%"=="attiva il volume" goto unmute
+if "%C%"=="attiva il volume!" goto unmute
 if "%C%"=="shutdown" goto shutdown
+if "%C%"=="spegni" goto shutdown
+if "%C%"=="buonanotte" goto shutdown
+if "%C%"=="Buonanotte" goto shutdown
+if "%C%"=="buonanotte!" goto shutdown
+if "%C%"=="Buonanotte!" goto shutdown
+if "%C%"=="notte" goto shutdown
+if "%C%"=="Notte" goto shutdown
+if "%C%"=="notte!" goto shutdown
+if "%C%"=="Notte!" goto shutdown
 if "%C%"=="killtask" goto killtask
 if "%C%"=="volumeup" goto volup
 if "%C%"=="volumedown" goto voldown
@@ -85,60 +342,94 @@ if "%C%"=="restart" cls && call jarvis.bat
 if "%C%"=="set" %speech% Security breach detected. Access denied. && goto start
 if "%C%"=="set " %speech% Security breach detected. Access denied. && goto start
 if "%C%"=="goto suicide" %speech% Security flaw detected. Access denied. && goto start
-
 ::WHEN ADDING NEW COMMAND IT MUST START: if "%C%"=="command"
 %C%
 goto start
 
-:jarvis
-echo Yes, sir?
-%speech% "Yes, sir?"
-goto start
-
 :mute
 call scripts\nircmd.exe mutesysvolume 2
-echo Volume has now been muted, sir.
+echo Ok imposto volume su 0.
 goto start
 
 :unmute
 call scripts\nircmd.exe mutesysvolume 2
-echo Volume has now been restored to its original state, sir.
-%speech% "Volume has now been restored to its original state, sir."
+echo Ok, ho riportato il volume com'era prima!
+%speech% "Ok, ho ripristinato il volume!"
 goto start
 
 :introduce
-echo Greetings acquaintance, my name is Jarvis. I am a DLA, a digital life assistant. My main function is to assist the user in any way possible to make ones daily life easier.
-%speech% "Greetings acquaintance, my name is Jarvis. I am a DLA, a digital life assistant. My main function is to assist the user in any way possible to make ones daily life easier."
+echo.
+%speech% "Ciao %username%, mi chiamo Eliza. Sono una VLA, un Virual Life Assistant. La mia funzione principale è assistere l'utente in ogni modo possibile per semplificare la vita quotidiana."
+echo Ciao %username%, mi chiamo Eliza. Sono una VLA, un Virual Life Assistant. La mia funzione principale è assistere l'utente in ogni modo possibile per semplificare la vita quotidiana.
+echo Sono stata creata e concepita dal mio creatore Paolo Gobber, per rimpiazzare Cortana un assistente
+echo privo di funzioni essenziali per un lavoro ottimale in Windows.
+echo Un obbiettivo che è stato usato per crearmi era ed è quello di tenere al sicuro i dati degli utenti
+echo grazie a protezioni multilivello, ho liste di siti bloccati che vengono ritenuti fraudolenti o dannosi per i dati degli utenti
+echo e tutti i dati che vengono chiesti alla prima configurazione come l'età verrà usata solo in locale per eseguire controlli di sicurezza.
+echo Per esempio se hai dichiarato di essere minorenne non potrai accedere a siti per soli maggiorenni, e questo permette
+echo di tenere al sicuro tutti gli utenti che mi utilizzano.
+echo.
+echo Il codice NON è open source perciò per modificarlo devi essere registrato al programma Developer Enterprise Build.
+echo Se vuoi vedere novità in anteprima ti consiglio di registrarti al programma Public Beta Tester,
+echo mentre se vuoi dare un aiuto più concreto puoi registrarti al programma Enterprise Build Tester 
+echo.
+echo Se vuoi saperne di più:
+echo 1=Link al programma Developer Enterprise Build
+echo 2=Link al programma Public Beta Tester
+echo 3=Link al programma Enterprise Build Tester
+echo 4=Torna a start senza interessarti di nulla
+choice /c 1234 /n
+if %errorlevel% == 1 goto DeveloperEnterpriseBuild
+if %errorlevel% == 2 goto PublicBetaTester
+if %errorlevel% == 3 goto EnterpriseBuildTester
+if %errorlevel% == 4 goto scherzo-tastiera
+
+:DeveloperEnterpriseBuild
+explorer www.google.it
+goto start
+
+:PublicBetaTester
+explorer www.google.it
+goto start
+
+:EnterpriseBuildTester
+explorer www.google.it
+goto start
+
+:scherzo-tastiera
+echo.
+color C
+echo Ops, piccolo scherzetto! :)
 goto start
 
 :shutdown
-echo Goodnight, sir.
-%speech% "Goodnight, sir."
+echo Buona notte %username%, a domani!.
+%speech% "Buona notte %username%, a domani!"
 shutdown -s -t 20
 echo.
 pause
 EXIT
 
 :killtask
-echo Please specify the name of the process you wish to kill. (name.exe)
+echo Per favore specificami il nome del processo che vuoi arrestare. (nome.exe)
 set /p procname=
 taskkill /IM %procname%
-echo Selected process has now been killed, sir.
+echo Ho arrestato il processo desiderato.
 goto start
 
 :volup
 start scripts\nircmd.exe changesysvolume 13107
-echo Volume has increased 20%, sir.
+echo Ho aumentato il volume del 20%.
 goto start
 
 :voldown
 start scripts\nircmd.exe changesysvolume -13107
-echo Volume has decreased by 20%, sir.
+echo Ho diminuito del 20 % il volume.
 goto start
 
 :volmax
 start scripts\nircmd.exe setsysvolume 65535
-echo Volume has been set to its maximum level, sir.
+echo Ho impostato il volume al massimo.
 goto start
 echo.
 
@@ -192,64 +483,21 @@ echo.
 echo For more information please read the readme file.
 goto start
 
-:autodelete
-echo Are you sure sir? I don't particularly like the idea of killing myself.
-%speech% "Are you sure sir? I don't particularly like the idea of killing myself."
-:killconfirm
-echo.
-set /p killpri=Enter your authorization code: 
-if "%killpri%"=="Kim Pi 1 1 0" echo Code accepted. && echo. && (set /p killsec=Does the second commanding officer agree? ) && goto killsec
-if "%killpri%"=="Paris Pi 1 1 0" echo Code accepted. && echo. && (set /p killsec=Does the second commanding officer agree? ) && goto killsec
-if "%killpri%"=="abort" goto :killabort
-
-echo.
-echo Authorization code rejected.
-goto start
-
-:killsec
-if "%killsec%"=="password" echo. && goto suicide
-if "%killsec%"=="password 2" echo. && goto suicide
-if "%killpri%"=="abort" goto :killabort
-echo.
-echo Authorization code rejected.
-goto start
-
-:suicide
-echo Authorization code accepted.
-echo.
-::start %play%killselfyes.wav
-echo NO.
-::echo Goodbye sir, it was nice knowing you.
-::cd..
-::del JARVIS\ -f
-::cd JARVIS
-goto start
-
-:killabort
-echo.
-echo Thank you, sir.
-%speech% "Thank you, sir."
-goto start
-
 :fuckoffsir
-echo I'm sorry sir, have you been on the drugs again? Kindly shut the fuck up sir. :)
+echo I'm sorry %user%, have you been on the drugs again? Kindly shut the fuck up sir. :)
 %speech% "I'm sorry sir, have you been on the drugs again? Kindly shut the fuck up sir."
 goto start
 
 :cmd
-echo Command Prompt has now been opened in a new window, sir.
-%speech% "Command Prompt has now been opened in a new window, sir."
+echo Ho aperto il promt dei comandi in una nuova finestra!
+%speech% "Ho avviato il promt dei comandi in una nuova finestra"
 start scripts\cmd.bat
 goto start
 
 
 :time
-if %time:~0,-9% GTR 12 (set /a timehour=%time:~0,-9%-12) else set timehour=%time:~0,-9%
-if %time:~3,1%==0 (set timeminute=%time:~4,1%) else set timeminute=%time:~3,2%
-echo It is currently %timeminute% minutes past %timehour%, sir.
-%speech% "It is currently %timeminute% minutes past %timehour%, sir."
-::echo The current time is %time% sir | clip
-::start scripts\nircmd.exe speak text ~$clipboard$
+echo Sono le %time% %user%
+%speech% "Sono le %time% , %user%"
 goto start
 
 ::date
@@ -315,18 +563,90 @@ echo It is currently %timeminute% minutes past %timehour% on %date%, sir.
 goto start
 
 :program
-set /p program=What program would you like to start?
+set /p program=Quale programma vuoi aprire?
+echo.
 if %program%==firefox goto openfirefox
 if %program%==msn goto openMSN
 if %program%==spotify goto openspotify
 if %program%==notepad goto opennotepad
+if %program%==word goto openword
+if %program%==excel goto openexcel
+if %program%==powerpoint goto openpowerpoint
+if %program%==access goto openaccess
+if %program%==mail goto openmail
+if %program%==publisher goto openpublisher
+if %program%==onenote goto openonenote
+if %program%==notion goto opennotion
+if %program%==browser goto openbrowser DA FARE: motore di ricerca predefinito 
+if %program%==start goto start
 if %program%==other goto openother
 else Unknown program. Please try again.
 goto program
 
 :openfirefox
 start firefox.exe
-echo Firefox has now opened, sir.
+echo Firefox aperto con successo!
+%speech% "Firefox aperto con successo"
+goto start
+
+:openpowerpoint
+start POWERPNT.exe
+echo Powerpoint aperto con successo!
+%speech% "Powerpoint aperto con successo"
+goto start
+
+:openexcel
+start EXCEL.exe
+echo Excel aperto con successo!
+%speech% "Excel aperto con successo"
+goto start
+
+:openword
+start WINWORD.exe
+echo Word aperto con successo!
+%speech% "Word aperto con successo"
+goto start
+
+:openaccess
+start MSACCESS.exe
+echo Access aperto con successo!
+%speech% "Access aperto con successo"
+goto start
+
+:openpublisher
+start MSPUB.exe
+echo Publisher aperto con successo!
+%speech% "Publisher aperto con successo"
+goto start
+
+:openmail
+start %MClient%
+echo Mail aperto con successo!
+%speech% "Mail aperto con successo"
+goto start
+
+:openonenote
+start ONENOTE.exe
+echo Onenote aperto con successo!
+%speech% "Onenote aperto con successo"
+goto start
+
+:opennotion
+start Notion.exe
+echo Notion aperto con successo!
+%speech% "Notion aperto con successo"
+goto start
+
+:opennotion
+start Notion.exe
+echo Notion aperto con successo!
+%speech% "Notion aperto con successo"
+goto start
+
+:openonenote
+start Notion.exe
+echo Notion aperto con successo!
+%speech% "Notion aperto con successo"
 goto start
 
 :openMSN
