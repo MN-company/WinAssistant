@@ -2,7 +2,7 @@
 :: STARTUP
 title Eliza
 set ElizaVer=1.2.5
-set speech=start scripts\nircmd.exe speak text
+set speech=start C:\ElizaFile\scripts\nircmd.exe speak text
 VER | findstr /i "5.1." > nul
 IF %ERRORLEVEL% EQU 0 set version=xp
 VER | findstr /i "6.1." > nul
@@ -12,7 +12,8 @@ setlocal
 goto Check-Skip-dir
 
 :Check-Skip-dir
-cd Skip-File
+color F
+cd C:\ElizaFile\Skip-File
 if exist Auto-xavv-disable.xavv (goto Skip-Simple-setting-avv) else (goto Check-Skip-dir2)
 
 :Check-Skip-dir2
@@ -82,6 +83,8 @@ goto Skip-change-color
 
 :simple-setting-color
 echo.
+echo F > color-debug.txt
+echo F > color-setting.txt
 echo Seleziona lo stile che ti piace:
 echo.
 echo Sfondo nero; Scritte blu
@@ -99,76 +102,40 @@ if %errorlevel% == 5 goto color-d
 
 
 :Skip-change-color
-cd C:\ElizaFile\Skip-File
-if exist "color-setting.xconfig" (goto Color-G-P) else (goto simple-setting-color)
+if exist "color.xconfig" (goto Skip-check-eta-1) else (goto simple-setting-color)
 
 :color-b
 set color=B
-echo %color% > select-color-b.xconfig
-echo color-setting > color-setting.xconfig
-goto Skip-change-color
+echo %color% > elzcolor.txt
+echo color-setting > scolor.xconfig
+cd..
+goto Skip-check-eta-1
 
 :color-e
 set color=E
-echo %color% > select-color-e.xconfig
-echo color-setting > color-setting.xconfig
-goto Skip-change-color
+echo %color% > color.txt
+echo color-setting > color.xconfig
+cd..
+goto Skip-check-eta-1
 
 :color-a
 set color=A
-echo %color% > select-color-a.xconfig
-echo color-setting > color-setting.xconfig
-goto Skip-change-color
+echo %color% > color.txt
+echo color-setting > color.xconfig
+cd..
+goto Skip-check-eta-1
 
 :color-c
 set color=C
-echo %color% > select-color-c.xconfig
-echo color-setting > color-setting.xconfig
-goto Skip-change-color
+echo %color% > color.txt
+echo color-setting > color.xconfig
+cd..
+goto Skip-check-eta-1
 
 :color-d
 set color=D
-echo %color% > select-color-d.xconfig
-echo color-setting > color-setting.xconfig
-goto Skip-change-color
-
-:Color-G-P
-if exist "select-color-b.xconfig" (goto color-B) else (goto Color-G-P1)
-
-:Color-G-P1
-if exist "select-color-e.xconfig" (goto color-E) else (goto Color-G-P2)
-
-:Color-G-P2
-if exist "select-color-a.xconfig" (goto color-A) else (goto Color-G-P3)
-
-:Color-G-P3
-if exist "select-color-c.xconfig" (goto color-C) else (goto Color-G-P4)
-
-:Color-G-P4
-if exist "select-color-d.xconfig" (goto color-D) else (goto simple-setting-color)
-
-:color-B
-set color=B
-cd..
-goto Skip-check-eta-1
-
-:color-E
-set color=E
-cd..
-goto Skip-check-eta-1
-
-:color-A
-set color=A
-cd..
-goto Skip-check-eta-1
-
-:color-C
-set color=C
-cd..
-goto Skip-check-eta-1
-
-:color-D
-set color=D
+echo %color% > color.txt
+echo color-setting > color.xconfig
 cd..
 goto Skip-check-eta-1
 
@@ -180,55 +147,34 @@ echo Sono minorenne
 echo Sono maggiorenne
 echo.
 choice /c 12 /n
-if %errorlevel% == 1 goto minorenne-1
-if %errorlevel% == 2 goto maggiorenne-1
+if %errorlevel% == 1 goto minorenne
+if %errorlevel% == 2 goto maggiorenne
 
 :Skip-check-eta-1
-echo.
-cd C:\ElizaFile\Skip-File
-if not exist "user-underage.xconfig" (goto Skip-check-eta-2) else (goto set-eta-17)
+if not exist "user-age.xconfig" (goto user-eta) else (goto username)
 
-:Skip-check-eta-2
-echo.
-cd C:\ElizaFile\Skip-File
-if not exist "user-adult.xconfig" (goto user-eta) else (goto set-eta-18)
+:minorenne
+echo 17 > user-age.txt
+echo Age ok > user-age.xconfig
+echo under> user-age.elzconfig
+goto Skip-check-eta-1
 
-:minorenne-1
-echo.
-cd Skip-File
-if not exist "user-underage.xconfig" (goto minorenne-2) else (goto Skip-check-eta-1)
-
-:minorenne-2
-echo eta=17 > user-underage.xconfig
-goto set-eta-17
-
-:set-eta-18
-set ETA=18
-cd..
-goto username
-
-:set-eta-17
-set ETA=17
-cd..
-goto username
-
-:maggiorenne-1
-echo.
-cd Skip-File
-if not exist "user-adult.xconfig" (goto maggiorenne-2) else (goto Skip-check-eta-1)
-
-:maggiorenne-2
-echo eta=18 > user-adult.xconfig
-goto set-eta-18
+:maggiorenne
+echo 18 > user-age.txt
+echo Age ok > user-age.xconfig
+goto Skip-check-eta-1
 
 :username
 cd Skip-File
-if exist "username-nickname.txt" (goto startonwake) else (goto username-2)
+if exist "username-nickname.txt" (goto check-mailclient-dir) else (goto username-2)
 
 :username-2
 echo.
-set/p "user=Inserisci il tuo Username: "
+echo Puoi mettere il tuo nome soltanto SENZA spazi altrimenti Eliza Crasha
+echo Inserisci "username" per utilizzare quello predefito dall'utente che sta usando il pc...
+set /p "user=Inserisci il tuo Username:"
 if '%user%' == '' echo Username non valido. Inserisci un Username valido. && pause && goto username
+if "%user%" == "username" echo Username predefito dall'utente che sta usando il pc. && goto check-mailclient-dir
 choice /c SN /m "Confermi il tuo Username '%user%' ?"
 if %errorlevel% == 2 goto username-2
 echo %user% > username-nickname.txt
@@ -236,45 +182,19 @@ echo Username confermato.
 goto check-mailclient-dir
 
 :check-mailclient-dir
-cd Skip-File
-if exist client-dir.xconfig (goto mailclient) else (goto mailclient-dir)
+if exist client-dir.xconfig (goto check-mailclient) else (goto mailclient-1)
 
-:mailclient-dir
-cd..
+:check-mailclient
+cd Client
+if exist mail-client.txt (goto check-spotify) else (goto mailclient-2)
+
+:mailclient-1
+cd C:\ElizaFile
 mkdir Client
 cd Skip-File
 echo client-dir > client-dir.xconfig
-goto mailclient
-
-:mailclient
 cd..
-if exist Client (goto mailclient-a) else (goto mailclient-dir)
-
-
-:mailclient-a
-cd Client
-if not exist "gmail-client.txt" (goto mailclient-b) else (goto browserclient)
-echo.
-
-:mailclient-b
-if not exist "outlook-client.txt" (goto mailclient-d) else (goto browserclient)
-echo.
-
-:mailclient-d
-echo.
-if not exist "yahoo-client.txt" (goto mailclient-e) else (goto browserclient)
-
-:mailclient-e
-echo.
-if not exist "libero-client.txt" (goto mailclient-f) else (goto browserclient)
-
-:mailclient-f
-if not exist "thunderbird-client.txt" (goto mailclient-g) else (goto browserclient)
-
-:mailclient-g
-if not exist "other-client.txt" (goto mailclient-1) else (goto browserclient)
-
-:mailclient-1
+:mailclient-2
 echo.
 echo Bene %user%, seleziona il client di mail che usi:
 echo.
@@ -286,60 +206,39 @@ echo Mozilla Thunderbird
 echo Nessuno di questi
 echo.
 choice /c 1234567 /n
-if %errorlevel% == 1 goto gmail-a
-if %errorlevel% == 2 goto outlook-b
-if %errorlevel% == 3 goto yahoo-d
-if %errorlevel% == 4 goto libero-e
-if %errorlevel% == 5 goto thunderbird-f
-if %errorlevel% == 6 goto other-g
-
-:gmail-a
-if exist "gmail-client.txt" (goto SP-var) else (goto gmail-1)
+if %errorlevel% == 1 goto gmail-1
+if %errorlevel% == 2 goto outlook-1
+if %errorlevel% == 3 goto yahoo-1
+if %errorlevel% == 4 goto libero-1
+if %errorlevel% == 5 goto thunderbird-1
+if %errorlevel% == 6 goto other-1
 
 :gmail-1
-echo gmail > gmail-client.txt
-goto gmail-a
-
-:outlook-b
-if exist "outlook-client.txt" (goto SP-var) else (goto outlook-1)
+echo gmail > mail-client.txt
+goto check-spotify
 
 :outlook-1
-echo outlook > outlook-client.txt
-goto outlook-b
-
-:yahoo-d
-if exist "yahoo-client.txt" (goto SP-var) else (goto yahoo-1)
-echo.
+echo outlook > mail-client.txt.
+goto check-spotify
 
 :yahoo-1
-echo yahoo > yahoo-client.txt
-goto yahoo-c
-
-:libero-e
-if exist "libero-client.txt" (goto SP-var) else (goto libero-1)
-echo.
+echo yahoo > mail-client.txt
+goto check-spotify
 
 :libero-1
-echo libero > libero-client.txt
-goto libero-d
-
-:thunderbird-f
-if exist "thunderbird-client.txt" (goto SP-var) else (goto thunderbird-1)
-echo.
+echo libero > mail-client.txt
+goto check-spotify
 
 :thunderbird-1
-echo thunderbird > thunderbird-client.txt
-goto thunderbird-e
-
-:other-g
-if exist "other-client.txt" (goto SP-var) else (goto other-1)
-echo.
+echo thunderbird > mail-client.txt
+goto check-spotify
 
 :other-1
-echo other > other-client.txt
-goto other-f
+echo other > mail-client.txt
+goto check-spotify
 
 :Web-app-spotify
+cd..
 echo.
 echo Di norma utilizzi Spotify Web o Spotify installato sul tuo PC?
 echo.
@@ -352,95 +251,80 @@ if %errorlevel% == 2 goto SP.exe
 echo.
 
 :SP-web
-echo.
-cd Client
-echo SP-web > Spotify-web.xclient
+cd C:\ElizaFile\Client
+echo web > Spotify.txt
 cd..
-goto SP-var
+goto check-spotify
 
 :SP.exe
 echo
 cd Client
-echo SP.exe > Spotify-exe.xclient
+echo exe > Spotify.txt
 cd..
-goto SP-var
+goto check-spotify
 
-:SP-var
-echo.
-cd Client
-if exist Spotify-web.xclient (goto SP-var-2) else (goto SP-var-1)
+:check-spotify
+cd C:\ElizaFile\Client
+if exist Spotify.txt (goto select-dialogo) else (goto Web-app-spotify)
 
-:SP-var-1
-echo.
-if not exist Spotify-exe.xclient (goto Web-app-spotify) else (goto SP-var-2)
-
-:SP-var-2
-if exist Spotify-web.xclient (set spotify=web && goto select-dialogo) else (set spotify=exe && goto select-dialogo)
-echo.
-
-:start-dialogo-eliza
-echo.
+:start-elz-dialogo
+cd..
 echo Scegli come Eliza si rivolgerà a te:
 echo.
 echo Ciao %user%,cosa posso fare per te? (Defoult)
 echo Hei %user%,ti posso aiutare?
-echo Sono qui a tua disposizione %user%!
-echo Personalizzato, una frase a tua scelta.
+echo Sono qui a tua disposizione %user%! 
+echo Personalizzato, una frase a tua scelta. 
 echo.
-choice /c 1234 /n 
+choice /C 1234 /n
 if %errorlevel% == 1 goto start-dialogo-eliza-1
 if %errorlevel% == 2 goto start-dialogo-eliza-2
 if %errorlevel% == 3 goto start-dialogo-eliza-3
-if %errorlevel% == 4 goto start-dialogo-eliza-4
+if %errorlevel% == 4 goto Mn-check
 
 :start-dialogo-eliza-1
-cd Skip-File
-echo Ciao %user%,cosa posso fare per te? > Dialogo.txt
+cd C:\ElizaFile\Skip-File
+echo Ciao %user%,cosa posso fare per te? > D1alogo.txt
 cd..
 goto select-dialogo
 
 :start-dialogo-eliza-2
-cd Skip-File
-echo Hei %user%,ti posso aiutare? > Dialogo.txt
+cd C:\ElizaFile\Skip-File
+echo Hei %user%,ti posso aiutare? > D1alogo.txt
 cd..
 goto select-dialogo
 
 :start-dialogo-eliza-3
-cd Skip-File
-echo Sono qui a tua disposizione %user%! > Dialogo.txt
-cd..
-goto select-dialogo
-
-:start-dialogo-eliza-4
-cd Skip-File
-set/p "dialogo=Inserisci una frase personalizzata: "
-echo %dialogo% > Dialogo.txt
+cd C:\ElizaFile\Skip-File
+echo Sono qui a tua disposizione %user%! > D1alogo.txt
 cd..
 goto select-dialogo
 
 :select-dialogo
 cd C:\ElizaFile\Skip-File
-if exist Dialogo-1.txt (set dialogo=Ciao %user%,cosa posso fare per te? && goto startonwake) else (goto select-dialogo-1)
+set /p MClient=<C:\ElizaFile\Client\mail-client.txt
+set /p ETA=<C:\ElizaFile\Skip-File\user-age.txt
+if exist D1alogo.txt (goto startonwake) else (goto start-elz-dialogo)
 
-:select-dialogo-1
+:Mn-check
 cd C:\ElizaFile\Skip-File
-if exist Dialogo-2.txt (set dialogo=Hei %user%,ti posso aiutare? && goto startonwake) else (goto select-dialogo-2)
+if exist user-age.elzconfig (echo Non sei autorizzato ad accedere a quaesta funzione, seleziona un altra opzione... && title Err-code: MN124 && goto start-elz-dialogo) goto start-dialogo-eliza-4
 
-:select-dialogo-2
-cd C:\ElizaFile\Skip-File
-if exist Dialogo-3.txt (set dialogo=Sono qui a tua disposizione %user%! && goto startonwake) else (goto select-dialogo-3)
-
-:select-dialogo-3
-cd C:\ElizaFile\Skip-File
-if exist Dialogo-4.txt (set dialogo=<"C:\ElizaFile\Skip-File\Dialogo-4.txt" && goto startonwake) else (goto start-dialogo-eliza)
+:start-dialogo-eliza-4
+set/p "dialogo=Inserisci una frase personalizzata: "
+echo %dialogo% > D1alogo.txt
+cd..
+goto startonwake
 
 :startonwake
 cd..
+title Eliza
+set /p color=<C:\ElizaFile\Skip-File\color.txt
 mode %XYZ%
 color %color%
-set /p user=<"C:\ElizaFile\Skip-File\username-nickname.txt"
-set /p user=<"C:\ElizaFile\Skip-File\Dialogo.txt"
-echo %dialogo%
+set /p user=<C:\ElizaFile\Skip-File\username-nickname.txt
+set /p dialogo=<C:\ElizaFile\Skip-File\D1alogo.txt
+echo %dialogo% 
 %speech% "%dialogo%"
 goto start
 
@@ -448,6 +332,8 @@ goto start
 echo.
 set /p C=Chiedi a Eliza: 
 echo.
+if "%C%"=="setting" goto setting-command
+if "%C%"=="debug" goto debug-command
 if "%C%"=="jarvis" goto jarvis
 if "%C%"=="promemoria" goto promemoria
 if "%C%"=="program:cryptotab" goto opencryptotab
@@ -527,13 +413,299 @@ if "%C%"=="dim stop" goto dimstop
 if "%C%"=="forecast" goto forecast
 if "%C%"=="news" goto news
 if "%C%"=="contact us" (echo Please email us at: "jarviscmd@gmail.com" to ask us any questions!) && goto start
-if "%C%"=="restart" cls && call jarvis.bat
-if "%C%"=="set" %speech% Security breach detected. Access denied. && goto start
-if "%C%"=="set " %speech% Security breach detected. Access denied. && goto start
-if "%C%"=="goto suicide" %speech% Security flaw detected. Access denied. && goto start
-::WHEN ADDING NEW COMMAND IT MUST START: if "%C%"=="command"
-%C%
 goto start
+
+:debug-command
+echo.
+title Eliza Debug Mode
+set color-debug=<C:\ElizaFile\Skip-File\color-debug.txt
+color %color-debug%
+mode 120, 30
+echo.
+set /p MClient=<C:\ElizaFile\Client\mail-client.txt
+set /p ETA=<C:\ElizaFile\Skip-File\user-age.txt
+set /p spotify=<C:\ElizaFile\Client\Spotify.txt
+echo Benvenuto %user% nella suite di comandi debug, questi comandi sono solamente in caso di bug ad Eliza
+echo NON usarli senza essere consapevole di ciò che fanno.
+echo.
+echo Versione di Eliza: %ElizaVer%
+echo Dialogo selezionato: %dialogo%
+echo Client mail: %MClient%
+echo Colore selezionato: %color%
+echo Nickname selezionato: %user%
+echo Username predefinito: %username%
+echo Età dell'utente: %ETA%
+echo Player musica: Spotify %spotify% (Unico supportato)
+echo.
+echo Qui puoi andare ad eseguire i comandi di debug tra cui
+echo Setup: Elimina tutti i file creati durante la configurazione iniziale
+echo Reload: Ricarica Eliza
+echo Premi 3 per tornare al menù principale
+echo.
+choice /c 123 /n
+if %errorlevel% == 1 goto debug-setup
+if %errorlevel% == 2 goto debug-reload
+if %errorlevel% == 3 goto startonwake
+
+:debug-reload
+echo.
+cd C:\ElizaFile
+start Eliza.bat
+exit
+
+:debug-setup
+cd C:\ElizaFile
+rd /s /q Client
+rd /s /q Skip-File
+mkdir Skip-File
+cd Skip-File
+echo Auto-xavv-enable > Auto-xavv-enable.xavv
+cd..
+start Eliza.bat
+exit
+
+:setting-command
+echo.
+title Eliza Setting Mode
+set color-setting=<C:\ElizaFile\Skip-File\color-setting.txt
+color %color-setting%
+mode 120, 30
+echo.
+set /p MClient=<C:\ElizaFile\Client\mail-client.txt
+set /p ETA=<C:\ElizaFile\Skip-File\user-age.txt
+set /p spotify=<C:\ElizaFile\Client\Spotify.txt
+echo Benvenuto %user% nelle impostazioni di Eliza, qui puoi modificare letteralmente di tutto
+echo Puoi modificare tutte le variabili impostate in precedenza e delle parti del sistema
+echo.
+echo Puoi modificare:
+echo.
+echo Dialogo selezionato
+echo Client mail
+echo Colore selezionato
+echo Nickname selezionato
+echo Player musica
+echo Colore Debug Mode
+echo Colore Setting Mode
+echo.
+echo Seleziona un pozione da modificare, seleziona 8 per tornare al menù principale
+choice /c 123456789 /n
+if %errorlevel% == 1 goto setting-dialogo
+if %errorlevel% == 2 goto setting-mail
+if %errorlevel% == 3 goto setting-color
+if %errorlevel% == 4 goto setting-nickname
+if %errorlevel% == 5 goto setting-spotify
+if %errorlevel% == 6 goto setting-color-debug
+if %errorlevel% == 7 goto setting-color-debug
+if %errorlevel% == 8 goto startonwake
+
+:setting-dialogo
+echo Scegli come Eliza si rivolgerà a te:
+echo.
+echo Ciao %user%,cosa posso fare per te? (Defoult)
+echo Hei %user%,ti posso aiutare?
+echo Sono qui a tua disposizione %user%! 
+echo Personalizzato, una frase a tua scelta. 
+echo.
+choice /C 1234 /n
+if %errorlevel% == 1 goto start-dialogo-eliza-1
+if %errorlevel% == 2 goto start-dialogo-eliza-2
+if %errorlevel% == 3 goto start-dialogo-eliza-3
+if %errorlevel% == 4 goto Mn-check
+
+:setting-mail
+echo.
+cd C:\ElizaFile\Client\
+echo Bene %user%, seleziona il client di mail che usi:
+echo.
+echo Gmail
+echo Outlook
+echo Yahoo Mail
+echo Libero Mail
+echo Mozilla Thunderbird
+echo Nessuno di questi
+echo.
+choice /c 1234567 /n
+if %errorlevel% == 1 goto gmail
+if %errorlevel% == 2 goto outlook
+if %errorlevel% == 3 goto yahoo
+if %errorlevel% == 4 goto libero
+if %errorlevel% == 5 goto thunderbird
+if %errorlevel% == 6 goto other
+if %errorlevel% == 7 goto setting-command
+
+:gmail
+echo gmail > mail-client.txt
+cd..
+goto setting-command
+
+:outlook
+echo outlook > mail-client.txt
+cd..
+goto setting-command
+
+:yahoo
+echo yahoo > mail-client.txt
+cd..
+goto setting-command
+
+:libero
+echo libero > mail-client.txt
+cd..
+goto setting-command
+
+:thunderbird
+echo thunderbird > mail-client.txt
+cd..
+goto setting-command
+
+:other
+echo other > mail-client.txt
+cd..
+goto setting-command
+
+:setting-color
+echo.
+echo Vuoi modificare il colore solo per questa sessione? SN
+choice /c SN /n
+if %errorlevel% == 1 goto setting-color-2
+if %errorlevel% == 2 goto setting-color-1
+
+:setting-color-1
+cd C:\ElizaFile\Skip-File
+echo Seleziona lo stile che ti piace:
+echo.
+echo Sfondo nero; Scritte blu
+echo Sfondo nero; Scritte gialle
+echo Sfondo nero; Scritte verdi
+echo Sfondo nero; Scritte rosse
+echo Sfondo nero; Scritte fucsia
+echo.
+choice /c 12345 /n
+if %errorlevel% == 1 goto color-1-b
+if %errorlevel% == 2 goto color-1-e
+if %errorlevel% == 3 goto color-1-a
+if %errorlevel% == 4 goto color-1-c
+if %errorlevel% == 5 goto color-1-d
+
+:color-1-b
+cd ElizaFile\Skip-File
+set color=B
+echo %color% > color.elzconfig
+goto setting
+
+:color-1-e
+cd ElizaFile\Skip-File
+set color=E
+echo %color% > color.elzconfig
+goto setting
+
+:color-1-a
+cd ElizaFile\Skip-File
+set color=A
+echo %color% > color.elzconfig
+goto setting
+
+:color-1-c
+cd ElizaFile\Skip-File
+set color=C
+echo %color% > color.elzconfig
+goto setting
+
+:color-1-d
+cd ElizaFile\Skip-File
+set color=D
+echo %color% > color.elzconfig
+goto setting
+
+:setting-color-2
+echo Seleziona lo stile che ti piace:
+echo.
+echo Sfondo nero; Scritte blu
+echo Sfondo nero; Scritte gialle
+echo Sfondo nero; Scritte verdi
+echo Sfondo nero; Scritte rosse
+echo Sfondo nero; Scritte fucsia
+echo.
+choice /c 12345 /n
+if %errorlevel% == 1 color b && setting
+if %errorlevel% == 2 color e && setting
+if %errorlevel% == 3 color a && setting
+if %errorlevel% == 4 color c && setting
+if %errorlevel% == 5 color d && setting
+
+:setting-color-3
+cd C:\ElizaFile\Skip-File
+echo Seleziona lo stile che ti piace:
+echo.
+echo Sfondo nero; Scritte blu
+echo Sfondo nero; Scritte gialle
+echo Sfondo nero; Scritte verdi
+echo Sfondo nero; Scritte rosse
+echo Sfondo nero; Scritte fucsia
+echo.
+choice /c 12345 /n
+if %errorlevel% == 1 goto color-debug-b
+if %errorlevel% == 2 goto color-debug-e
+if %errorlevel% == 3 goto color-debug-a
+if %errorlevel% == 4 goto color-debug-c
+if %errorlevel% == 5 goto color-debug-d
+
+:color-debug-b
+echo B > color-debug.syconfig
+goto setting
+
+:color-debug-e
+echo E > color-debug.syconfig
+goto setting
+
+:color-debug-a
+echo A > color-debug.syconfig
+goto setting
+
+:color-debug-c
+echo C > color-debug.syconfig
+goto setting
+
+:color-debug-d
+echo D > color-debug.syconfig
+goto setting
+
+:setting-color-3
+cd C:\ElizaFile\Skip-File
+echo Seleziona lo stile che ti piace:
+echo.
+echo Sfondo nero; Scritte blu
+echo Sfondo nero; Scritte gialle
+echo Sfondo nero; Scritte verdi
+echo Sfondo nero; Scritte rosse
+echo Sfondo nero; Scritte fucsia
+echo.
+choice /c 12345 /n
+if %errorlevel% == 1 goto color-setting-b
+if %errorlevel% == 2 goto color-setting-e
+if %errorlevel% == 3 goto color-setting-a
+if %errorlevel% == 4 goto color-setting-c
+if %errorlevel% == 5 goto color-setting-d
+
+:color-setting-b
+echo B > color-setting.syconfig
+goto setting
+
+:color-setting-e
+echo E > color-setting.syconfig
+goto setting
+
+:color-setting-a
+echo A > color-setting.syconfig
+goto setting
+
+:color-setting-c
+echo C > color-setting.syconfig
+goto setting
+
+:color-setting-d
+echo D > color-setting.syconfig
+goto setting
 
 :mute
 call scripts\nircmd.exe mutesysvolume 2
@@ -558,8 +730,20 @@ echo e tutti i dati che vengono chiesti alla prima configurazione come l'età ve
 echo Per esempio se hai dichiarato di essere minorenne non potrai accedere a siti per soli maggiorenni, e questo permette
 echo di tenere al sicuro tutti gli utenti che mi utilizzano.
 echo.
-echo Il codice è open source disponibile alla nostra pagina GitHub, se vuoi contribuire benvenga!
-explorer www.github.com/MN-company/WinAssistant
+echo Il codice NON è open source perciò per modificarlo devi essere registrato al programma Developer Enterprise Build.
+echo Se vuoi vedere novità in anteprima ti consiglio di registrarti al programma Public Beta Tester,
+echo mentre se vuoi dare un aiuto più concreto puoi registrarti al programma Enterprise Build Tester 
+echo.
+echo Se vuoi saperne di più:
+echo 1=Link al programma Developer Enterprise Build
+echo 2=Link al programma Public Beta Tester
+echo 3=Link al programma Enterprise Build Tester
+echo 4=Torna a start senza interessarti di nulla
+choice /c 1234 /n
+if %errorlevel% == 1 goto DeveloperEnterpriseBuild
+if %errorlevel% == 2 goto PublicBetaTester
+if %errorlevel% == 3 goto EnterpriseBuildTester
+if %errorlevel% == 4 goto scherzo-tastiera
 
 :DeveloperEnterpriseBuild
 explorer www.google.it
@@ -924,6 +1108,7 @@ echo Windows Live Messenger should now have opened, sir.
 goto start
 
 :openspotify
+set /p spotify=<C:\ElizaFile\Client\Spotify.txt
 start "C:\program files\spotify\spotify.exe"
 echo Spotify should now have opened, sir.
 goto start
