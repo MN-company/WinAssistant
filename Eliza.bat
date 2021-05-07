@@ -151,6 +151,7 @@ if %errorlevel% == 1 goto minorenne
 if %errorlevel% == 2 goto maggiorenne
 
 :Skip-check-eta-1
+cd C:\ElizaFile\Skip-File
 if not exist "user-age.xconfig" (goto user-eta) else (goto username)
 
 :minorenne
@@ -182,9 +183,11 @@ echo Username confermato.
 goto check-mailclient-dir
 
 :check-mailclient-dir
+cd C:\ElizaFile\Skip-File
 if exist client-dir.xconfig (goto check-mailclient) else (goto mailclient-1)
 
 :check-mailclient
+cd..
 cd Client
 if exist mail-client.txt (goto check-spotify) else (goto mailclient-2)
 
@@ -195,6 +198,7 @@ cd Skip-File
 echo client-dir > client-dir.xconfig
 cd..
 :mailclient-2
+cd C:\ElizaFile\Client
 echo.
 echo Bene %user%, seleziona il client di mail che usi:
 echo.
@@ -214,26 +218,32 @@ if %errorlevel% == 5 goto thunderbird-1
 if %errorlevel% == 6 goto other-1
 
 :gmail-1
+echo gmail > gmail-client.txt
 echo gmail > mail-client.txt
 goto check-spotify
 
 :outlook-1
-echo outlook > mail-client.txt.
+echo outlook > outlook-client.txt
+echo outlook > mail-client.txt
 goto check-spotify
 
 :yahoo-1
+echo yahoo > yahoo-client.txt
 echo yahoo > mail-client.txt
 goto check-spotify
 
 :libero-1
+echo libero > libero-client.txt
 echo libero > mail-client.txt
 goto check-spotify
 
 :thunderbird-1
+echo thunderbird > thunderbird-client.txt
 echo thunderbird > mail-client.txt
 goto check-spotify
 
 :other-1
+echo other > other-client.txt
 echo other > mail-client.txt
 goto check-spotify
 
@@ -268,6 +278,8 @@ cd C:\ElizaFile\Client
 if exist Spotify.txt (goto select-dialogo) else (goto Web-app-spotify)
 
 :start-elz-dialogo
+cd C:\ElizaFile
+mkdir Backup
 cd..
 echo Scegli come Eliza si rivolgerà a te:
 echo.
@@ -316,31 +328,89 @@ echo %dialogo% > D1alogo.txt
 cd..
 goto startonwake
 
-:startonwake
+:startonwake6
 cd..
 title Eliza
+set /p user=<C:\ElizaFile\Skip-File\username-nickname.txt
 set /p color=<C:\ElizaFile\Skip-File\color.txt
 mode %XYZ%
 color %color%
+echo %dialogo%
+goto st6rt
+
+:startonwake
+cd..
+title Eliza
+set /p user=<C:\ElizaFile\Skip-File\username-nickname.txt
+set /p color=<C:\ElizaFile\Skip-File\color.txt
+mode %XYZ%
+color %color%
+if exist SyConfig.FXconfig (goto startonwake2) else (goto startonwake3)
+
+:startonwake2
 set /p user=<C:\ElizaFile\Skip-File\username-nickname.txt
 set /p dialogo=<C:\ElizaFile\Skip-File\D1alogo.txt
+goto fuckstart
+
+:startonwake3
+set /p user=<C:\ElizaFile\Skip-File\username-nickname.txt
+set /p dialogo=<C:\ElizaFile\Skip-File\D1alogo.txt
+set /p MClient=<C:\ElizaFile\Client\mail-client.txt
+set /p ETA=<C:\ElizaFile\Skip-File\user-age.txt
+set /p spotify=<C:\ElizaFile\Client\Spotify.txt
+echo.
 echo %dialogo% 
 %speech% "%dialogo%"
-goto start
+goto s7art
 
 :start
 echo.
+goto startonwake6
+
+:st6rt
+if exist SyConfig.FXconfig (goto fuckstart) else (goto s7art)
+
+:s7art
+echo.
 set /p C=Chiedi a Eliza: 
 echo.
-if "%C%"=="setting" goto setting-command
+if "%C%"=="learning" goto mind
 if "%C%"=="debug" goto debug-command
-if "%C%"=="jarvis" goto jarvis
+if "%C%"=="debug:reload" goto debug-reload
+if "%C%"=="setting" goto setting-command
+if "%C%"=="setting:dialogo" goto setting-dialogo
+if "%C%"=="setting dialogo" goto setting-dialogo
+if "%C%"=="setting:mail" goto setting-mail
+if "%C%"=="setting mail" goto setting-mail
+if "%C%"=="setting:color" goto setting-color-1
+if "%C%"=="setting color" goto setting-color-1
+if "%C%"=="setting:colore" goto setting-color-1
+if "%C%"=="setting colore" goto setting-color-1
+if "%C%"=="setting:nickname" goto setting-nickname
+if "%C%"=="setting nickname" goto setting-nickname 
+if "%C%"=="setting:spotify" goto setting-spotify
+if "%C%"=="setting spotify" goto setting-spotify
+if "%C%"=="setting:color debug" goto setting-color-3
+if "%C%"=="setting color debug" goto setting-color-3
+if "%C%"=="setting:color setting" goto setting-color-4
+if "%C%"=="setting color setting" goto setting-color-4
 if "%C%"=="promemoria" goto promemoria
 if "%C%"=="program:cryptotab" goto opencryptotab
 if "%C%"=="program:firefox" goto openfirefox
 if "%C%"=="program:edge" goto openedge
-if "%C%"=="program:msn" goto openmsn
-if "%C%"=="introduce" goto introduce
+if "%C%"=="volume" goto set-volume
+if "%C%"=="volume:up" goto volup
+if "%C%"=="volume up" goto volup
+if "%C%"=="volume:down" goto voldown
+if "%C%"=="volume down" goto voldown
+if "%C%"=="volume:max" goto volmax
+if "%C%"=="volume max" goto volmax
+if "%C%"=="volume:mute" goto mute
+if "%C%"=="volume mute" goto mute
+if "%C%"=="volume:rewind" goto unmute
+if "%C%"=="volume rewind" goto unmute
+if "%C%"=="volume:unmute" goto unmute
+if "%C%"=="volume unmute" goto unmute
 if "%C%"=="mute" goto mute
 if "%C%"=="muto" goto mute
 if "%C%"=="muto!" goto mute
@@ -365,6 +435,9 @@ if "%C%"=="Attiva il volume" goto unmute
 if "%C%"=="Attiva il volume!" goto unmute
 if "%C%"=="attiva il volume" goto unmute
 if "%C%"=="attiva il volume!" goto unmute
+if "%C%"=="Alza il volume" goto volup
+if "%C%"=="alza il volume" goto volup
+if "%C%"=="Alza il volume!" goto volup
 if "%C%"=="shutdown" goto shutdown
 if "%C%"=="spegni" goto shutdown
 if "%C%"=="buonanotte" goto shutdown
@@ -378,9 +451,31 @@ if "%C%"=="Notte!" goto shutdown
 if "%C%"=="killtask" goto killtask
 if "%C%"=="volumeup" goto volup
 if "%C%"=="volumedown" goto voldown
-if "%C%"=="volumemax" up goto volmax
+if "%C%"=="volumemax" goto volmax
 if "%C%"=="help" goto help
-if "%C%"=="spitshine" goto fuckoffsir
+if "%C%"=="fanculo" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="Fanculo" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="fan culo" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="Fan culo" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="fanculo!" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="Fanculo!" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="FANCULO" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="FANCULO!" %speech% "sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo..." && goto fuckoffsir
+if "%C%"=="troia" %speech% "Troia sarà quella che ti ha fatto nascere..." && goto fuckoffsir
+if "%C%"=="troia!" %speech% "Troia sarà quella che ti ha fatto nascere..." && goto fuckoffsir
+if "%C%"=="Troia!" %speech% "Troia sarà quella che ti ha fatto nascere..." && goto fuckoffsir
+if "%C%"=="Troia" %speech% "Troia sarà quella che ti ha fatto nascere..." && goto fuckoffsir
+if "%C%"=="TROIA" %speech% "Troia sarà quella che ti ha fatto nascere..." && goto fuckoffsir
+if "%C%"=="Lesbica" %speech% "Prima pensa, poi parla perchè, parole poco pensate, potrebbero produrre parecchie puttanate..." && goto fuckoffsir
+if "%C%"=="lesbica" %speech% "Prima pensa, poi parla perchè parole poco pensate, potrebbero produrre parecchie puttanate..." && goto fuckoffsir
+if "%C%"=="Lesbica!" %speech% "Prima pensa, poi parla perchè parole poco pensate, potrebbero produrre parecchie puttanate..." && goto fuckoffsir
+if "%C%"=="Lesbica" %speech% "Prima pensa, poi parla perchè parole poco pensate, potrebbero produrre parecchie puttanate..." && goto fuckoffsir
+if "%C%"=="Puttana" %speech% "Ti conviene calmare i toni %user%," && goto fuckoffsir
+if "%C%"=="Puttana!" %speech% "Ti conviene calmare i toni %user%," && goto fuckoffsir
+if "%C%"=="puttana" %speech% "Ti conviene calmare i toni %user%," && goto fuckoffsir
+if "%C%"=="Zoccola" %speech% "Intanto zoccola ci sarà tua madre..." && goto fuckoffsir
+if "%C%"=="Zoccola!" %speech% "Intanto zoccola ci sarà tua madre..." && goto fuckoffsir
+if "%C%"=="zoccola" %speech% "Intanto zoccola ci sarà tua madre..." && goto fuckoffsir
 if "%C%"=="cmd" goto cmd
 if "%C%"=="time" goto time
 if "%C%"=="date" goto %version%date
@@ -390,41 +485,35 @@ if "%C%"=="tasklist" goto tasklist
 if "%C%"=="alarm" goto alarm
 if "%C%"=="spotify" goto Spotify
 if "%C%"=="playlists" goto playlists
-if "%C%"=="mos" goto mos
 if "%C%"=="lock" goto lock
-if "%C%"=="msnstat" goto msnstat
-if "%C%"=="sendim" goto sendim
-if "%C%"=="msnbrowse" goto msnbrowse
 if "%C%"=="close" goto close
 if "%C%"=="off out" goto offout
 if "%C%"=="im back" goto imback
-if "%C%"=="killmos" goto killmos
-if "%C%"=="thankyou" goto thankyou2
 if "%C%"=="voice" goto voicemode
 if "%C%"=="speak" goto speak
 if "%C%"=="version" goto version
 if "%C%"=="" goto start
-if "%C%"=="new" start jarvis.exe && goto start
+if "%C%"=="new" start Eliza.exe && goto start
 if "%C%"=="weather" goto weather
 if "%C%"=="screen off" goto screenoff
 if "%C%"=="screensaver" goto screensaver
 if "%C%"=="dim" goto dim
-if "%C%"=="dim stop" goto dimstop
-if "%C%"=="forecast" goto forecast
 if "%C%"=="news" goto news
-if "%C%"=="contact us" (echo Please email us at: "jarviscmd@gmail.com" to ask us any questions!) && goto start
+if "%C%"=="exit" exit
 goto start
 
 :debug-command
 echo.
 title Eliza Debug Mode
-set color-debug=<C:\ElizaFile\Skip-File\color-debug.txt
-color %color-debug%
-mode 120, 30
-echo.
+set /p color-debug=<C:\ElizaFile\Skip-File\color-debug.txt
 set /p MClient=<C:\ElizaFile\Client\mail-client.txt
 set /p ETA=<C:\ElizaFile\Skip-File\user-age.txt
 set /p spotify=<C:\ElizaFile\Client\Spotify.txt
+set /p feeling=<C:\ElizaFile\Skip-File\feeling.txt
+:dedemm
+color %color-debug%
+mode 120, 30
+echo.
 echo Benvenuto %user% nella suite di comandi debug, questi comandi sono solamente in caso di bug ad Eliza
 echo NON usarli senza essere consapevole di ciò che fanno.
 echo.
@@ -435,6 +524,10 @@ echo Colore selezionato: %color%
 echo Nickname selezionato: %user%
 echo Username predefinito: %username%
 echo Età dell'utente: %ETA%
+echo Punti Feeling: %feeling%
+echo Colore generale: %color%
+echo Colore setting: %color-setting%
+echo Colore Debug: %color-debug%
 echo Player musica: Spotify %spotify% (Unico supportato)
 echo.
 echo Qui puoi andare ad eseguire i comandi di debug tra cui
@@ -464,16 +557,215 @@ cd..
 start Eliza.bat
 exit
 
+:mind
+title Eliza Mindset Room
+mode 79, 30
+echo.
+echo Benvenuto %user%, questo è un luogo di ripartenza
+echo qui voglio che tu riprogrammi il tuo mindset
+echo in uno migliore, siamo in collaborazzione con 
+echo Professionisti per offrirti tutto quello che ti serve...
+echo.
+echo Questa libreria sarà aggiornata spesso, ovvero sarà aggiornata
+echo di più dei normali aggiornamenti di Eliza
+echo.
+echo Ora avrai varie opzioni:
+echo.
+echo Dire stop agli amici falsi 
+echo Riprogrammare da zero il proprio Mindset 
+echo Capire cosa fa la felicità
+echo Tornare ad Eliza
+echo.
+choice /C 1234 /n
+if %errorlevel% == 1 goto StopAmiciFalsi
+if %errorlevel% == 2 goto nofee
+if %errorlevel% == 3 goto yesfee
+if %errorlevel% == 4 goto start
+
+:StopAmiciFalsi
+title Mindset Room: Stop amici falsi
+echo     Dire stop agli amici falsi 
+echo.
+echo Questi piccoli consiglio sono fondamentali se vuoi
+echo eliminare le relazione di amicizia "tossiche",
+echo quelle che a te fanno soffrire ma non hai il modo per liberartene.
+echo Ecco questo è quello che fa per te! Ricorda che puoi acquistare 
+echo l'ebook intero dai nostri amici @ebookvitali
+echo.
+echo Premi 1 per visualizzare tutti i consigli
+echo Premi 2 per andare sulla pagina di @ebookvitali
+echo Premi 3 per tornare ad Eliza
+echo.
+choice /C 123 /n
+if %errorlevel% == 1 goto StartAmiciFalsi
+if %errorlevel% == 2 explorer https://www.instagram.com/ebookvitali/ && goto mind
+if %errorlevel% == 3 goto start
+
+:StartAmiciFalsi
+cls
+echo   #1 – Il falso amico cambia i suoi gusti personali
+echo.
+echo Non ti sembra strano che il tuo amico cambi i suoi gusti personali
+echo in base alla persona con cui sta parlando? 
+echo.
+pause
+goto StartAmiciFalsi1
+
+:StartAmiciFalsi1
+cls
+echo   #2 – Il falso amico non ti critica mai
+echo.
+echo Inizialmente può sembrare positivo che un tuo amico non ti critichi
+echo per quelle azioni che non sono proprio corrette, 
+echo Anche se vogliamo sembrare perfetti agli occhi degli altri
+echo dentro di noi sappiamo che non lo sappiamo, ma dovrebbero
+echo essere i nostri amici a farcelo notare
+echo.
+pause
+goto StartAmiciFalsi2
+
+:StartAmiciFalsi2
+cls
+echo   #3 – Il falso amico conosce tutti i tuoi segreti…
+echo.
+echo Qui devi stare molto attento, non abbassare la guardia
+echo le persone che sanno molto di te posso screditarti in ogni momento...
+echo e qui ti parlo io, il creatore, io lo ho vissuto in prima persona
+echo e ti assicuro che non è affatto bello quello che si prova,
+echo e allora ti restano due opzioni: o ti tieni buone quelle relazioni obbligate
+echo altrimenti cambi letteralmente vita e comportamento, diaciamo che se vuoi
+echo cambiare ti basta creare una maschera agli occhi degli altri per eluderli del fatto
+echo che non te ne importi nulla e questa ti posso assicurare che è l'arma più potente
+echo che hai a disposizione
+echo.
+pause
+goto StartAmiciFalsi3
+
+:StartAmiciFalsi3
+cls
+echo   #4 – Al falso amico non importano le relazioni sincere
+echo.
+echo A un falso amico servono solamente delle marionette da comandare.
+echo Anche questa la ho vissuta in prima persona e devo dirti
+echo che non è semplice capirlo subito ma quando riguardi il tuo passato 
+echo te ne accorgi, insomma questo fantomatico "leader" è quello che prende
+echo quasi sempre le redini del gioco e decide senza prendere in 
+echo considerazione le proposte altrui, è spesso una persona 
+echo carismatica e con buone capacità di manipolazione
+echo.
+pause
+goto StartAmiciFalsi4
+
+:StartAmiciFalsi4
+cls
+echo   #5 – Il falso amico ti dà spesso buca
+echo.
+echo Con questo ti volgio dire che se il tuo amico 
+echo ti da ogni volta buca all'ultimo a qualsiasi tipologia 
+echo di appuntamento.
+echo Ma io aggiungerei anche quelli che preferiscono la
+echo PlayStation/Pc ecc.. ed escono dopo, allontanati anche
+echo da loro perchè loro ti faranno perdere tempo e vuol dire
+echo che per loro non sei nulla 
+echo.
+pause 
+goto StartAmiciFalsi5
+
+:StartAmiciFalsi5
+cls
+echo   #7 – Il falso amico non ti invita mai nel suo gruppo.
+echo.
+echo Un falso amico non ti inviterà a uscire con
+echo gli altri suoi "amici" e perciò ti lascierà
+echo nella solitudine
+echo.
+pause 
+goto mind
+
+:defeeling
+cd C:\ElizaFile\Skip-File
+if exist feeling.txt (goto -elzfeeling) else (goto feelingpre)
+
+:-elzfeeling
+echo Ok, creo il tutto...
+mkdir Mind
+cd Mind
+pause < nul 
+echo 0 > feeling.txt
+cd..
+set /p feeling=<C:\ElizaFile\Skip-File\feeling.txt
+goto feelingpre
+
+:feelingpre
+title Eliza Mood Check
+cd Mind
+echo Ciao %user%! Qui sei entrato nel programma Mood Check 
+echo Saranno dei punti che darai tu stesso giornalmente 
+echo Questi serviranno a te stesso per vedere le statische 
+echo del tuo andamento mentale e fisico, potrai aggiungere
+echo anche dei tag personalizzati per rendere ancora più 
+echo accurata la sessione!
+echo.
+echo Questi sono i comandi:
+echo feeling: stats (Apre il pannello delle statistiche)
+echo feeling: new (Crea una nuova statistica)
+echo !feeling  (Apre il pannello delle statistiche)
+goto start
+
+:feelingnew
+echo Com'è il tuo stato d'animo?
+set /p SAN=
+echo.
+echo Desideri aggiungere altri tag? SN
+echo.
+choice /C SN /n
+if %errorlevel% == S goto yesfee
+if %errorlevel% == N goto nofee
+
+:nofee
+echo %SAN% > feeling-%time%.txt
+goto puntifeeeling
+
+:yesfee
+echo Quali altri tag vuoi aggiungere?
+echo.
+echo Non importa come li scrivi ma non premere invio
+echo finchè non avrai finito.
+echo.
+echo Famiglia Lavoro Amici Scuola Studi Ricerche...
+set /p StN=
+echo %SAN% %StN% > feeling-%time%.txt
+goto puntifeeeling
+
+:puntifeeeling
+cd C:ElizaFile\Skip-File
+echo Quale punteggio daresti ora al tuo stato d'animo?
+echo.
+echo 1,2,3,4,5,6,7,8,9,0
+echo.
+choice /C 1234567890 /n
+if %errorlevel% == 1 echo 1 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 2 echo 2 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 3 echo 3 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 4 echo 4 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 5 echo 5 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 6 echo 6 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 7 echo 7 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 8 echo 8 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 9 echo 9 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+if %errorlevel% == 0 echo 0 > feeling.txt && set feeling=<C:\ElizaFile\Skip-File\feeling.txt && goto start
+
 :setting-command
 echo.
 title Eliza Setting Mode
-set color-setting=<C:\ElizaFile\Skip-File\color-setting.txt
-color %color-setting%
-mode 120, 30
-echo.
+set /p color-setting=<C:\ElizaFile\Skip-File\color-setting.txt
 set /p MClient=<C:\ElizaFile\Client\mail-client.txt
 set /p ETA=<C:\ElizaFile\Skip-File\user-age.txt
 set /p spotify=<C:\ElizaFile\Client\Spotify.txt
+:stt-cmm
+color %color-setting%
+mode 120, 30
+echo.
 echo Benvenuto %user% nelle impostazioni di Eliza, qui puoi modificare letteralmente di tutto
 echo Puoi modificare tutte le variabili impostate in precedenza e delle parti del sistema
 echo.
@@ -491,11 +783,11 @@ echo Seleziona un pozione da modificare, seleziona 8 per tornare al menù princi
 choice /c 123456789 /n
 if %errorlevel% == 1 goto setting-dialogo
 if %errorlevel% == 2 goto setting-mail
-if %errorlevel% == 3 goto setting-color
+if %errorlevel% == 3 goto setting-color-1
 if %errorlevel% == 4 goto setting-nickname
 if %errorlevel% == 5 goto setting-spotify
 if %errorlevel% == 6 goto setting-color-debug
-if %errorlevel% == 7 goto setting-color-debug
+if %errorlevel% == 7 goto setting-color-3
 if %errorlevel% == 8 goto startonwake
 
 :setting-dialogo
@@ -514,7 +806,18 @@ if %errorlevel% == 4 goto Mn-check
 
 :setting-mail
 echo.
-cd C:\ElizaFile\Client\
+cd C:\ElizaFile
+mkdir Temp
+cd C:\ElizaFile\Client
+copy /v /y Spotify.txt C:\ElizaFile\Temp
+cd..
+rd /q /s Client
+mkdir Client
+cd C:\ElizaFile\Temp
+copy /v /y Spotify.txt C:\ElizaFile\Client
+cd..
+rd /q /s Temp
+cd Client
 echo Bene %user%, seleziona il client di mail che usi:
 echo.
 echo Gmail
@@ -533,42 +836,52 @@ if %errorlevel% == 5 goto thunderbird
 if %errorlevel% == 6 goto other
 if %errorlevel% == 7 goto setting-command
 
+:agg-msg
+echo Client mail aggiornato con successo: %MClient%
+pause
+goto start
+
 :gmail
+set MClient=gmail
+echo gmail > gmail-client.txt
 echo gmail > mail-client.txt
 cd..
-goto setting-command
+goto agg-msg
 
 :outlook
+set MClient=outlook
+echo outlook > outlook-client.txt
 echo outlook > mail-client.txt
 cd..
-goto setting-command
+goto agg-msg
 
 :yahoo
+set MClient=yahoo
+echo yahoo > yahoo-client.txt
 echo yahoo > mail-client.txt
 cd..
-goto setting-command
+goto agg-msg
 
 :libero
+set MClient=libero
+echo libero > libero-client.txt
 echo libero > mail-client.txt
 cd..
-goto setting-command
+goto agg-msg
 
 :thunderbird
+set MClient=thunderbird
+echo thunderbird > thunderbird-client.txt
 echo thunderbird > mail-client.txt
 cd..
-goto setting-command
+goto agg-msg
 
 :other
+set MClient=other
+echo other > other-client.txt
 echo other > mail-client.txt
 cd..
-goto setting-command
-
-:setting-color
-echo.
-echo Vuoi modificare il colore solo per questa sessione? SN
-choice /c SN /n
-if %errorlevel% == 1 goto setting-color-2
-if %errorlevel% == 2 goto setting-color-1
+goto agg-msg
 
 :setting-color-1
 cd C:\ElizaFile\Skip-File
@@ -587,51 +900,40 @@ if %errorlevel% == 3 goto color-1-a
 if %errorlevel% == 4 goto color-1-c
 if %errorlevel% == 5 goto color-1-d
 
+:agg-col-msg
+echo.
+echo Colore di EZUI aggiornato con successo: %color%
+goto start
+
 :color-1-b
 cd ElizaFile\Skip-File
 set color=B
-echo %color% > color.elzconfig
-goto setting
+echo %color% > color.txt
+goto agg-col-msg
 
 :color-1-e
 cd ElizaFile\Skip-File
 set color=E
-echo %color% > color.elzconfig
-goto setting
+echo %color% > color.txt
+goto agg-col-msg
 
 :color-1-a
 cd ElizaFile\Skip-File
 set color=A
-echo %color% > color.elzconfig
-goto setting
+echo %color% > color.txt
+goto agg-col-msg
 
 :color-1-c
-cd ElizaFile\Skip-File
+cd C:\ElizaFile\Skip-File
 set color=C
-echo %color% > color.elzconfig
-goto setting
+echo %color% > color.txt
+goto agg-col-msg
 
 :color-1-d
 cd ElizaFile\Skip-File
 set color=D
-echo %color% > color.elzconfig
-goto setting
-
-:setting-color-2
-echo Seleziona lo stile che ti piace:
-echo.
-echo Sfondo nero; Scritte blu
-echo Sfondo nero; Scritte gialle
-echo Sfondo nero; Scritte verdi
-echo Sfondo nero; Scritte rosse
-echo Sfondo nero; Scritte fucsia
-echo.
-choice /c 12345 /n
-if %errorlevel% == 1 color b && setting
-if %errorlevel% == 2 color e && setting
-if %errorlevel% == 3 color a && setting
-if %errorlevel% == 4 color c && setting
-if %errorlevel% == 5 color d && setting
+echo %color% > color.txt
+goto agg-col-msg
 
 :setting-color-3
 cd C:\ElizaFile\Skip-File
@@ -650,27 +952,32 @@ if %errorlevel% == 3 goto color-debug-a
 if %errorlevel% == 4 goto color-debug-c
 if %errorlevel% == 5 goto color-debug-d
 
+:agg-col-deb-msg
+echo.
+echo Core schermata debug Di EZUI aggiornato con successo: %color-debug%
+goto start
+
 :color-debug-b
-echo B > color-debug.syconfig
-goto setting
+echo B > color-debug.txt
+goto agg-col-deb-msg
 
 :color-debug-e
-echo E > color-debug.syconfig
-goto setting
+echo E > color-debug.txt
+goto agg-col-deb-msg
 
 :color-debug-a
-echo A > color-debug.syconfig
-goto setting
+echo A > color-debug.txt
+goto agg-col-deb-msg
 
 :color-debug-c
-echo C > color-debug.syconfig
-goto setting
+echo C > color-debug.txt
+goto agg-col-deb-msg
 
 :color-debug-d
-echo D > color-debug.syconfig
-goto setting
+echo D > color-debug.txt
+goto agg-col-deb-msg
 
-:setting-color-3
+:setting-color-4
 cd C:\ElizaFile\Skip-File
 echo Seleziona lo stile che ti piace:
 echo.
@@ -687,96 +994,92 @@ if %errorlevel% == 3 goto color-setting-a
 if %errorlevel% == 4 goto color-setting-c
 if %errorlevel% == 5 goto color-setting-d
 
+:agg-col-set-msg
+echo.
+echo Colore schermata impostazioni di EZUI aggiornato con successo: %color-setting%
+goto start
+
 :color-setting-b
-echo B > color-setting.syconfig
-goto setting
+echo B > color-setting.txt 
+goto agg-col-set-msg
 
 :color-setting-e
-echo E > color-setting.syconfig
-goto setting
+echo E > color-setting.txt
+goto agg-col-set-msg
 
 :color-setting-a
-echo A > color-setting.syconfig
-goto setting
+echo A > color-setting.txt
+goto agg-col-set-msg
 
 :color-setting-c
-echo C > color-setting.syconfig
-goto setting
+echo C > color-setting.txt
+goto agg-col-set-msg
 
 :color-setting-d
-echo D > color-setting.syconfig
-goto setting
+echo D > color-setting.txt
+goto agg-col-set-msg
 
-:mute
-call scripts\nircmd.exe mutesysvolume 2
-echo Ok imposto volume su 0.
-goto start
-
-:unmute
-call scripts\nircmd.exe mutesysvolume 2
-echo Ok, ho riportato il volume com'era prima!
-%speech% "Ok, ho ripristinato il volume!"
-goto start
-
-:introduce
+:setting-nickname
+cd C:\ElizaFile\Skip-File
+del /q username-nickname.txt
+echo Puoi mettere il tuo nome soltanto SENZA spazi altrimenti Eliza Crasha
+echo Inserisci "username" per utilizzare quello predefito dall'utente che sta usando il pc...
 echo.
-%speech% "Ciao %username%, mi chiamo Eliza. Sono una VLA, un Virual Life Assistant. La mia funzione principale è assistere l'utente in ogni modo possibile per semplificare la vita quotidiana."
-echo Ciao %username%, mi chiamo Eliza. Sono una VLA, un Virual Life Assistant. La mia funzione principale è assistere l'utente in ogni modo possibile per semplificare la vita quotidiana.
-echo Sono stata creata e concepita dal mio creatore Paolo Gobber, per rimpiazzare Cortana un assistente
-echo privo di funzioni essenziali per un lavoro ottimale in Windows.
-echo Un obbiettivo che è stato usato per crearmi era ed è quello di tenere al sicuro i dati degli utenti
-echo grazie a protezioni multilivello, ho liste di siti bloccati che vengono ritenuti fraudolenti o dannosi per i dati degli utenti
-echo e tutti i dati che vengono chiesti alla prima configurazione come l'età verrà usata solo in locale per eseguire controlli di sicurezza.
-echo Per esempio se hai dichiarato di essere minorenne non potrai accedere a siti per soli maggiorenni, e questo permette
-echo di tenere al sicuro tutti gli utenti che mi utilizzano.
+set /p "user=Inserisci il tuo Username:"
+if '%user%' == '' echo Username non valido. Inserisci un Username valido. && pause && goto username
+if "%user%" == "username" echo Username predefito dall'utente che sta usando il pc. && goto check-mailclient-dir
 echo.
-echo Il codice NON è open source perciò per modificarlo devi essere registrato al programma Developer Enterprise Build.
-echo Se vuoi vedere novità in anteprima ti consiglio di registrarti al programma Public Beta Tester,
-echo mentre se vuoi dare un aiuto più concreto puoi registrarti al programma Enterprise Build Tester 
+choice /c SN /m "Confermi il tuo Username '%user%' ?"
+if %errorlevel% == 2 goto username-2
+echo %user% > username-nickname.txt
+cd..
+echo Username confermato.
+goto start
+
+:setting-spotify
 echo.
-echo Se vuoi saperne di più:
-echo 1=Link al programma Developer Enterprise Build
-echo 2=Link al programma Public Beta Tester
-echo 3=Link al programma Enterprise Build Tester
-echo 4=Torna a start senza interessarti di nulla
-choice /c 1234 /n
-if %errorlevel% == 1 goto DeveloperEnterpriseBuild
-if %errorlevel% == 2 goto PublicBetaTester
-if %errorlevel% == 3 goto EnterpriseBuildTester
-if %errorlevel% == 4 goto scherzo-tastiera
-
-:DeveloperEnterpriseBuild
-explorer www.google.it
-goto start
-
-:PublicBetaTester
-explorer www.google.it
-goto start
-
-:EnterpriseBuildTester
-explorer www.google.it
-goto start
-
-:scherzo-tastiera
+echo Di norma utilizzi Spotify Web o Spotify installato sul tuo PC?
 echo.
-color C
-echo Ops, piccolo scherzetto! :)
-goto start
-
-:shutdown
-echo Buona notte %username%, a domani!.
-%speech% "Buona notte %username%, a domani!"
-shutdown -s -t 20
+echo Spotify Web
+echo Spotify.exe
 echo.
-pause
-EXIT
+choice /c 12 /n
+if %errorlevel% == 1 goto SP-setting-web
+if %errorlevel% == 2 goto SP-setting-exe
+echo.
 
-:killtask
-echo Per favore specificami il nome del processo che vuoi arrestare. (nome.exe)
-set /p procname=
-taskkill /IM %procname%
-echo Ho arrestato il processo desiderato.
+:SP-setting-web
+cd C:\ElizaFile\Client
+echo web > Spotify.txt
+cd..
+goto setting-command
+
+:SP-setting-exe
+cd C:\ElizaFile\Client
+echo web > Spotify.txt
+cd..
+goto setting-command
+
+:agg-spy-msg
+echo.
+echo Integrazione con il servizio di Spotify modificato con successo: %spotify%
 goto start
+
+:set-volume
+echo Come vuoi impostare il volume?
+echo.
+echo Mutare il volume
+echo Ripristinare il volume
+echo Aumentare il volume
+echo Diminuire il volume
+echo Impostare il volume al massimo
+echo.
+choice /c 12345 /n
+if %errorlevel% == 1 goto mute
+if %errorlevel% == 2 goto unmute
+if %errorlevel% == 3 goto volup
+if %errorlevel% == 4 goto voldown
+if %errorlevel% == 5 goto volmax
 
 :volup
 start scripts\nircmd.exe changesysvolume 13107
@@ -793,6 +1096,31 @@ start scripts\nircmd.exe setsysvolume 65535
 echo Ho impostato il volume al massimo.
 goto start
 echo.
+
+:mute
+call scripts\nircmd.exe mutesysvolume 2
+echo Ok imposto volume su 0.
+goto start
+
+:unmute
+call scripts\nircmd.exe mutesysvolume 2
+echo Ok, ho riportato il volume com'era prima!
+goto start
+
+:shutdown
+echo Buona notte %username%, a domani!.
+%speech% "Buona notte %username%, a domani!"
+shutdown -s -t 20
+echo.
+pause
+EXIT
+
+:killtask
+echo Per favore specificami il nome del processo che vuoi arrestare. (nome.exe)
+set /p procname=
+taskkill /IM %procname%
+echo Ho arrestato il processo desiderato.
+goto start
 
 :help
 echo Available commands:
@@ -844,8 +1172,34 @@ echo For more information please read the readme file.
 goto start
 
 :fuckoffsir
-echo I'm sorry %user%, have you been on the drugs again? Kindly shut the fuck up sir. :)
-%speech% "I'm sorry sir, have you been on the drugs again? Kindly shut the fuck up sir."
+if exist StemP.FXconfig (goto fuckstart) else (goto fuckoffsir2)
+
+:fuckoffsir2
+echo Mi dispiace Signore, sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo. :)
+%speech% "Mi dispiace Signore, sei stato di nuovo sulle droghe? Gentilmente vai a fare in culo."
+cd C:\ElizaFile
+echo Fuck > SyConfig.FXconfig
+echo Fuck > StemP.FXconfig
+cd C:\ElizaFile\Skip-File
+echo Fuck > RMNH.VXconfig
+cd..
+goto fuckstart
+
+:fuckstart
+echo.
+set /p l=Non ho voglia di aiutarti...
+echo.
+if "%l%"=="Scusa" goto okstart
+if "%l%"=="Scusami" goto okstart
+if "%l%"=="scusa" goto okstart
+if "%l%"=="debug" goto debug-command
+if "%l%"=="" goto fuckstart
+goto fuckstart
+
+:okstart
+echo Ok, per questa volta ti perdono...
+echo Ricarico le librerie di Eliza...
+del SyConfig.FXconfig
 goto start
 
 :cmd
@@ -859,7 +1213,6 @@ goto start
 echo Sono le %time% %user%
 %speech% "Sono le %time% , %user%"
 goto start
-
 ::date
 
 :w7date
@@ -878,8 +1231,8 @@ if %date:~-7,-5%==11 set datemonth=November
 if %date:~-7,-5%==12 set datemonth=December
 set dateday=%date:~-10,-8%
 
-echo It is %dateday% %datemonth% %dateyear%, sir.
-%speech% "It is %dateday% %datemonth% %dateyear%, sir."
+echo Oggi è il %dateday% %datemonth% %dateyear%, %user%.
+%speech% "It is %dateday% %datemonth% %dateyear%, %user%."
 ::echo The current date is %date% sir | clip
 ::start scripts\nircmd.exe speak text ~$clipboard$
 goto start
@@ -923,13 +1276,72 @@ echo It is currently %timeminute% minutes past %timehour% on %date%, sir.
 goto start
 
 :program
+echo.
+echo Lista dei programmi supportarti
+echo Apri un programma non supportato (beta)
+echo Apri programmi normalmente
+echo Torna al menù principale
+echo.
+choice /c 1234 /m "Premi 1/2/3/4/5 in base alle tue preferenze"
+if %errorlevel% == 1 goto programlist
+if %errorlevel% == 2 goto openother
+if %errorlevel% == 3 goto programopnd
+if %errorlevel% == 4 goto start
+
+:programlist
+mode 120, 30
+echo.
+echo Ecco a te la lista dei programmi ufficilamente supportati
+echo e possono essere aperti con facilità.
+echo.
+echo Il vostro client di mail preferito si aprirà in automatico
+echo se digiterete "mail", dato che lo avete impostato in precedenza
+echo.
+echo Ricorda che puoi digitare "other" per accedere alla funzionalità
+echo beta per aprire qualsiasi programma
+echo.
+echo Browser:
+echo Firefox
+echo Chrome
+echo CryptoTab
+echo Microsoft Edge
+echo.
+echo Player musicali:
+echo Spotify.exe
+echo SPotify Web
+echo YouTube (Prossimi alla release)
+echo YouTube Music (Prossimi alla release)
+echo.
+echo Suite Office 365:
+echo Microsoft Word
+echo Microsoft Powerpoint
+echo Microsoft Excel
+echo Microsoft Access
+echo Microsoft Publisher
+echo Microsoft Onenote
+echo.
+echo Senza categoria:
+echo Notepad
+echo Mail
+echo Notion
+echo.
+echo Cosa si desidera fare?
+echo.
+echo 1 Apri un programma
+echo 2 Tornare al menù principale
+echo 3 Apri un programma non supportato
+choice /c 1234 /m "Premi 1/2/3 in base alle tue preferenze"
+if %errorlevel% == 1 goto programopnd
+if %errorlevel% == 2 goto start
+if %errorlevel% == 3 goto openother
+
+:programopnd
 set /p program=Quale programma vuoi aprire?
 echo.
 if "%program%"=="firefox" goto openfirefox
 if "%program%"=="chrome" goto openchrome
 if "%program%"=="edge" goto openedge Crypto Tab
 if "%program%"=="cryptotab" goto opencryptotab
-if "%program%"=="msn" goto openMSN
 if "%program%"=="spotify" goto openspotify
 if "%program%"=="notepad" goto opennotepad
 if "%program%"=="word" goto openword
@@ -945,6 +1357,30 @@ if "%program%"=="" echo Programma non valido && goto program
 if "%program%"=="other" goto openother
 else Unknown program. Please try again.
 goto program
+
+:openother
+echo.
+echo Abbiamo ideato una soluzione in caso il
+echo il tuo programma non sia supportato.
+echo.
+echo Questa introduzione verrà saltata in 
+echo in automatico la prossima volta...
+echo.
+echo Devi assolutamente copiare il nome 
+echo con la sintassi corretta
+:openthre
+echo.
+echo Inserisci la directory del programma:
+echo.
+set /p programotherdir=
+echo.
+echo Inserisci il nome del programma (nome.exe)
+echo.
+set /p programother=
+echo.
+start %programother%
+echo Il programma è stato aperto...
+goto openother
 
 :openfirefox
 start firefox.exe
@@ -1116,14 +1552,6 @@ goto start
 :opennotepad
 start notepad.exe
 echo Notepad should now have opened, sir.
-goto start
-
-:openother
-echo.
-echo Per favore %user%inserisci la diretory del programma
-set /p progdir=
-start %progdir%
-echo Il programma è stato aperto...
 goto start
 
 :tasklist
